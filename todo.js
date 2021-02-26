@@ -1,4 +1,4 @@
-firebase.auth().onAuthStateChanged(async function(user) {
+firebase.auth().onAuthStateChanged(async function (user) {
 
   if (user) {
     // Signed in
@@ -9,7 +9,7 @@ firebase.auth().onAuthStateChanged(async function(user) {
       email: user.email
     })
 
-    document.querySelector('form').addEventListener('submit', async function(event) {
+    document.querySelector('form').addEventListener('submit', async function (event) {
       event.preventDefault()
 
       let todoText = document.querySelector('#todo').value
@@ -31,7 +31,7 @@ firebase.auth().onAuthStateChanged(async function(user) {
           </div>
         `)
 
-        document.querySelector(`.todo-${todoId} .done`).addEventListener('click', async function(event) {
+        document.querySelector(`.todo-${todoId} .done`).addEventListener('click', async function (event) {
           event.preventDefault()
           document.querySelector(`.todo-${todoId}`).classList.add('opacity-20')
           await db.collection('todos').doc(todoId).delete()
@@ -41,11 +41,10 @@ firebase.auth().onAuthStateChanged(async function(user) {
     })
 
     // Show only my to-dos
-    let querySnapshot = await db.collection('todos').where('userId', '==', user.uid).get()
-    console.log(`Number to todos in collection: ${querySnapshot.size}`)
+    let response = await fetch(`/.netlify/functions/get_todos?userId=${user.uid}`)
+    let todos = await response.json()
 
-    let todos = querySnapshot.docs
-    for (let i=0; i<todos.length; i++) {
+    for (let i = 0; i < todos.length; i++) {
       let todoId = todos[i].id
       let todo = todos[i].data()
       let todoText = todo.text
@@ -57,7 +56,7 @@ firebase.auth().onAuthStateChanged(async function(user) {
         </div>
       `)
 
-      document.querySelector(`.todo-${todoId} .done`).addEventListener('click', async function(event) {
+      document.querySelector(`.todo-${todoId} .done`).addEventListener('click', async function (event) {
         event.preventDefault()
         document.querySelector(`.todo-${todoId}`).classList.add('opacity-20')
         await db.collection('todos').doc(todoId).delete()
@@ -69,7 +68,7 @@ firebase.auth().onAuthStateChanged(async function(user) {
       <button class="text-pink-500 underline sign-out">Sign Out</button>
     `
 
-    document.querySelector('.sign-out').addEventListener('click', function(event) {
+    document.querySelector('.sign-out').addEventListener('click', function (event) {
       console.log('sign out clicked')
       firebase.auth().signOut()
       document.location.href = 'todo.html'
