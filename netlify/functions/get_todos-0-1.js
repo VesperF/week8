@@ -1,4 +1,4 @@
-let firebase = require('./firebase')
+let firebase = require('./firebase_todos')
 
 exports.handler = async function(event) {
   console.log('hello from the back-end!')
